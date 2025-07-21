@@ -69,7 +69,7 @@ export interface SideBarProps {
 
 export const AI_USER: User = {
   id: "ai",
-  user_name: "ChitChat AI",
+  user_name: " AI",
   image_url: "/ai.png",
   is_online: true,
   email: "ai@chitchat.com",

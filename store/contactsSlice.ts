@@ -19,8 +19,7 @@ export const getAllUsers = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get('/auth');
-        console.log('response', response);
-      return response.users;
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error?.message || "Failed to fetch users");
     }

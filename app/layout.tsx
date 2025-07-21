@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ChitChat - Chat App",
+  title: "Chatoplus - Chat App",
   description: "Chatting made easier than ever",
 };
 

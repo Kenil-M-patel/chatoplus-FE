@@ -28,7 +28,7 @@ export const sendMessage = createAsyncThunk(
         text,
       });
 
-      return response.message;
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error?.message || "Failed to send message");
     }

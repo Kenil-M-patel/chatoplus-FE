@@ -1,12 +1,8 @@
 import { FaArrowLeft, FaUserAlt } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
-import { AI_USER, ChatViewProps } from "@/constants/constants";
+import { ChatViewProps } from "@/constants/constants";
 import { ChangeEvent, useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
@@ -26,9 +22,7 @@ export function ChatView({
   handleTyping,
   handleStopTyping,
 }: ChatViewProps) {
-  const [showWelcome, setShowWelcome] = useState<boolean>(false);
   const [streamingMessage, setStreamingMessage] = useState<string | null>(null);
-  const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -46,7 +40,6 @@ export function ChatView({
 
   useEffect(() => {
     setStreamingMessage(null);
-    setIsStreaming(false);
   }, [selectedUser]);
 
   // Auto-focus input when user is selected or component mounts
