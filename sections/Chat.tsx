@@ -150,7 +150,6 @@ export default function ChatPage() {
     }
   }, [selectedUser, currentUser, isMobileView, dispatch]);
 
-  const [previousMessageCount, setPreviousMessageCount] = useState(0);
 
   useEffect(() => {
     if (messages?.length && !isMessagesLoading) {

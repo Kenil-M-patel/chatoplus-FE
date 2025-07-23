@@ -1,4 +1,3 @@
-import { handleRegister } from "@/actions/serverActions";
 import Input from "@/components/Input";
 import ProfileLabel from "@/components/ProfileLabel";
 import { formFields } from "@/constants/constants";
@@ -14,6 +13,10 @@ import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { handleRegisterThunk } from "@/store/authSlice";
+
 const RegisterForm = () => {
   const [errors, setErrors] = useState<
     Partial<Record<keyof RegisterFormData, string>>
@@ -25,10 +28,12 @@ const RegisterForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+ const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrors({});
+
     const formData = new FormData(event.currentTarget);
     const data: RegisterFormData = {
       username: formData.get("username") as string,
@@ -37,6 +42,7 @@ const RegisterForm = () => {
       confirmPassword: formData.get("confirm-password") as string,
       profilePicture: selectedFile as File,
     };
+
     const result = registerSchema.safeParse(data);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof RegisterFormData, string>> = {};
@@ -47,31 +53,29 @@ const RegisterForm = () => {
       setErrors(fieldErrors);
       return;
     }
+
     try {
       setIsLoading(true);
-      const imageUrl = await uploadImageToCloudinary(
-        result.data.profilePicture
-      );
+
+      const imageUrl = await uploadImageToCloudinary(result.data.profilePicture);
       const registeredData: RegisteredUserData = {
         username: result.data.username,
         email: result.data.email,
         password: result.data.password,
         profilePicture: imageUrl,
       };
-      const response = await handleRegister(registeredData);
-      if (response.status === "success") {
-        handleSuccess("Registration successful!");
-        router.push("/login");
-      } else {
-        handleError(response.message);
-        console.error("Registration failed:", response.message);
-      }
-    } catch (error) {
+
+      await dispatch(handleRegisterThunk(registeredData)).unwrap();
+      handleSuccess("Registration successful!");
+      router.push("/login");
+    } catch (error: any) {
+      handleError(error.message || "Something went wrong during registration");
       console.error("Registration error:", error);
     } finally {
       setIsLoading(false);
     }
   };
+
   const handleProfilePictureChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {

@@ -1,6 +1,4 @@
 "use client";
-import { handleLogin } from "@/actions/serverActions";
-import { login } from "@/store/authSlice";
 import { handleError, handleSuccess } from "@/utils/utils";
 import {
   LoginFormData,
@@ -12,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useDispatch } from "react-redux";
+import { handleLoginThunk } from "@/store/authSlice";
+import { AppDispatch } from "@/store/store";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -20,44 +20,75 @@ export default function LoginForm() {
   >({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrors({});
-    const formData = new FormData(e.currentTarget);
-    const data: LoginFormData = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    };
-    const result = loginSchema.safeParse(data);
-    if (!result.success) {
-      const fieldErrors: Partial<Record<keyof RegisterFormData, string>> = {};
-      result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as keyof RegisterFormData;
-        fieldErrors[field] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    try {
-      setIsLoading(true);
-      const response = await handleLogin(result.data);
-      if (response.status === "success") {
-        handleSuccess("Logged in successfully");
-        dispatch(login({ user: response.user, token: response.token }));
-        router.push("/");
-      } else {
-        handleError(response.message);
-        console.error("Login failed:", response.message);
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+//   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+//     e.preventDefault();
+//     setErrors({});
+//     const formData = new FormData(e.currentTarget);
+//     const data: LoginFormData = {
+//       email: formData.get("email") as string,
+//       password: formData.get("password") as string,
+//     };
+//     const result = loginSchema.safeParse(data);
+//     if (!result.success) {
+//       const fieldErrors: Partial<Record<keyof RegisterFormData, string>> = {};
+//       result.error.issues.forEach((issue) => {
+//         const field = issue.path[0] as keyof RegisterFormData;
+//         fieldErrors[field] = issue.message;
+//       });
+//       setErrors(fieldErrors);
+//       return;
+//     }
+//     try {
+//         setIsLoading(true);
+//         const response = await handleLogin(result.data);
+//         if (response.status === "success") {
+//           handleSuccess("Logged in successfully");
+//           dispatch(login({ user: response.user, token: response.token }));
+//           router.push("/");
+//       } else {
+//         handleError(response.message);
+//         console.error("Login failed:", response.message);
+//       }
+//     } catch (error) {
+//       console.error("Registration error:", error);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setErrors({});
+  const formData = new FormData(e.currentTarget);
+  const data: LoginFormData = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
   };
+  const result = loginSchema.safeParse(data);
+  if (!result.success) {
+    const fieldErrors: Partial<Record<keyof RegisterFormData, string>> = {};
+    result.error.issues.forEach((issue) => {
+      const field = issue.path[0] as keyof RegisterFormData;
+      fieldErrors[field] = issue.message;
+    });
+    setErrors(fieldErrors);
+    return;
+  }
 
+  try {
+    setIsLoading(true);
+    await dispatch(handleLoginThunk(result.data)).unwrap();
+    handleSuccess("Logged in successfully");
+    router.push("/");
+  } catch (error: any) {
+  handleError(typeof error === "string" ? error : error?.message || "Login failed");
+    console.error("Login failed:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
