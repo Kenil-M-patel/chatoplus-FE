@@ -3,8 +3,8 @@ import { IoSend } from "react-icons/io5";
 import { ChatViewProps } from "@/constants/constants";
 import { ChangeEvent, useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+// import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+// import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 export function ChatView({
   isMobileView,
