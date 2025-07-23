@@ -64,95 +64,95 @@ export function ChatView({
     }
   }, [messages.length]);
 
-  const markdownComponents = {
-    code({ inline, className, children, ...props }) {
-      const match = /language-(\w+)/.exec(className || "");
-      return !inline && match ? (
-        <div className="overflow-x-auto">
-          <SyntaxHighlighter
-            style={oneDark}
-            language={match[1]}
-            PreTag="div"
-            className="rounded-lg text-xs sm:text-sm"
-            wrapLines={true}
-            wrapLongLines={true}
-            {...props}
-          >
-            {String(children).replace(/\n$/, "")}
-          </SyntaxHighlighter>
-        </div>
-      ) : (
-        <code
-          className="bg-slate-800 text-sky-300 px-1 py-0.5 rounded font-mono text-xs sm:text-sm break-words"
-          {...props}
-        >
-          {children}
-        </code>
-      );
-    },
-    table({ children }) {
-      return (
-        <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse border border-slate-600 text-xs sm:text-sm">
-            {children}
-          </table>
-        </div>
-      );
-    },
-    thead({ children }) {
-      return <thead className="bg-slate-800">{children}</thead>;
-    },
-    th({ children }) {
-      return (
-        <th className="border border-slate-600 px-2 py-1 sm:px-4 sm:py-2 text-sky-400 font-semibold">
-          {children}
-        </th>
-      );
-    },
-    td({ children }) {
-      return (
-        <td className="border border-slate-600 px-2 py-1 sm:px-4 sm:py-2 text-slate-100 break-words">
-          {children}
-        </td>
-      );
-    },
-    blockquote({ children }) {
-      return (
-        <blockquote className="border-l-4 border-sky-500 pl-3 sm:pl-4 italic text-slate-200 text-xs sm:text-sm">
-          {children}
-        </blockquote>
-      );
-    },
-    ul({ children }) {
-      return (
-        <ul className="list-disc pl-4 sm:pl-6 space-y-1 text-slate-100 text-xs sm:text-sm">
-          {children}
-        </ul>
-      );
-    },
-    ol({ children }) {
-      return (
-        <ol className="list-decimal pl-4 sm:pl-6 space-y-1 text-slate-100 text-xs sm:text-sm">
-          {children}
-        </ol>
-      );
-    },
-    li({ children }) {
-      return <li className="text-slate-100">{children}</li>;
-    },
-    img({ src, alt }) {
-      return (
-        <Image
-          src={src}
-          alt={alt}
-          width={0}
-          height={0}
-          sizes="100vw"
-          className="rounded-lg w-full max-w-[90%] sm:max-w-[600px] h-auto mx-auto"
-        />
-      );
-    },
-  };
+  // const markdownComponents = {
+  //   code({ inline, className, children, ...props }) {
+  //     const match = /language-(\w+)/.exec(className || "");
+  //     return !inline && match ? (
+  //       <div className="overflow-x-auto">
+  //         <SyntaxHighlighter
+  //           style={oneDark}
+  //           language={match[1]}
+  //           PreTag="div"
+  //           className="rounded-lg text-xs sm:text-sm"
+  //           wrapLines={true}
+  //           wrapLongLines={true}
+  //           {...props}
+  //         >
+  //           {String(children).replace(/\n$/, "")}
+  //         </SyntaxHighlighter>
+  //       </div>
+  //     ) : (
+  //       <code
+  //         className="bg-slate-800 text-sky-300 px-1 py-0.5 rounded font-mono text-xs sm:text-sm break-words"
+  //         {...props}
+  //       >
+  //         {children}
+  //       </code>
+  //     );
+  //   },
+  //   table({ children }) {
+  //     return (
+  //       <div className="overflow-x-auto">
+  //         <table className="min-w-full border-collapse border border-slate-600 text-xs sm:text-sm">
+  //           {children}
+  //         </table>
+  //       </div>
+  //     );
+  //   },
+  //   thead({ children }) {
+  //     return <thead className="bg-slate-800">{children}</thead>;
+  //   },
+  //   th({ children }) {
+  //     return (
+  //       <th className="border border-slate-600 px-2 py-1 sm:px-4 sm:py-2 text-sky-400 font-semibold">
+  //         {children}
+  //       </th>
+  //     );
+  //   },
+  //   td({ children }) {
+  //     return (
+  //       <td className="border border-slate-600 px-2 py-1 sm:px-4 sm:py-2 text-slate-100 break-words">
+  //         {children}
+  //       </td>
+  //     );
+  //   },
+  //   blockquote({ children }) {
+  //     return (
+  //       <blockquote className="border-l-4 border-sky-500 pl-3 sm:pl-4 italic text-slate-200 text-xs sm:text-sm">
+  //         {children}
+  //       </blockquote>
+  //     );
+  //   },
+  //   ul({ children }) {
+  //     return (
+  //       <ul className="list-disc pl-4 sm:pl-6 space-y-1 text-slate-100 text-xs sm:text-sm">
+  //         {children}
+  //       </ul>
+  //     );
+  //   },
+  //   ol({ children }) {
+  //     return (
+  //       <ol className="list-decimal pl-4 sm:pl-6 space-y-1 text-slate-100 text-xs sm:text-sm">
+  //         {children}
+  //       </ol>
+  //     );
+  //   },
+  //   li({ children }) {
+  //     return <li className="text-slate-100">{children}</li>;
+  //   },
+  //   img({ src, alt }) {
+  //     return (
+  //       <Image
+  //         src={src}
+  //         alt={alt}
+  //         width={0}
+  //         height={0}
+  //         sizes="100vw"
+  //         className="rounded-lg w-full max-w-[90%] sm:max-w-[600px] h-auto mx-auto"
+  //       />
+  //     );
+  //   },
+  // };
 
   return (
     <div className="flex flex-col h-full bg-white shadow-lg md:rounded-r-2xl overflow-hidden">
