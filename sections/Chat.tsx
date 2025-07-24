@@ -1,8 +1,8 @@
 "use client";
-import { getMessages, getAIChatResponse, sendMessage as sendMessageAPI } from "@/actions/serverActions";
+
 import { ChatView } from "@/components/ChatView";
 import { NoChatSelectedView } from "@/components/NoChatSelectedView";
-import { API_URL, Message, User, UserInfo } from "@/constants/constants";
+import {  Message, User, UserInfo } from "@/constants/constants";
 import { logout } from "@/store/authSlice";
 import { RootState } from "@/store/ReduxProvider";
 import { handleError } from "@/utils/utils";
@@ -11,7 +11,7 @@ import { useState, useEffect, useRef, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { io, Socket } from "socket.io-client";
 import Sidebar from "./Sidebar";
-import { sendMessage, fetchMessages, addMessage, setMessages, clearMessages, setTyping } from "@/store/messageSlice";
+import { sendMessage, fetchMessages, addMessage,  clearMessages, setTyping } from "@/store/messageSlice";
 import { updateUserStatus, updateUserLastMessage } from "@/store/contactsSlice";
 import { AppDispatch } from "@/store/store";
 

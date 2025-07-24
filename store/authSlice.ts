@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import axiosInstance from "@/axios/axios";
-import { AuthState } from "@/constants/constants";
+import { AuthState as BaseAuthState } from "@/constants/constants";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RegisteredUserData } from "@/utils/validationSchema";
 
@@ -7,6 +9,17 @@ const storedUser =
   typeof window !== "undefined" ? localStorage.getItem("user") : null;
 const storedToken =
   typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+// interface AuthResponse {
+//   user: any; // Replace with your actual user type
+//   token: string;
+//   message?: string;
+// }
+
+type AuthState = BaseAuthState & {
+  isLoading: boolean;
+  error: string | null;
+  users?: [];
+};
 
 const initialState: AuthState = {
   isAuthenticated: !!storedToken,
@@ -18,10 +31,13 @@ const initialState: AuthState = {
 };
 
 // Thunks
-export const handleLoginThunk = createAsyncThunk(
+export const handleLoginThunk = createAsyncThunk<
+  any,
+  { email: string; password: string }
+>(
   "auth/handleLogin",
   async (
-    { email, password }: { email: string; password: string },
+    { email, password },
     { rejectWithValue }
   ) => {
     try {
@@ -32,21 +48,21 @@ export const handleLoginThunk = createAsyncThunk(
       return response;
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data?.message || "Login failed"
+        error?.response?.message || "Login failed"
       );
     }
   }
 );
 
-export const handleRegisterThunk = createAsyncThunk(
+export const handleRegisterThunk = createAsyncThunk<any, RegisteredUserData>(
   "auth/handleRegister",
-  async (userData: RegisteredUserData, { rejectWithValue }) => {
+  async (userData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/auth/register", userData);
       return response;
     } catch (error: any) {
       return rejectWithValue(
-        error?.response?.data?.message || "Registration failed"
+        error?.response?.message || "Registration failed"
       );
     }
   }
