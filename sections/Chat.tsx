@@ -120,6 +120,18 @@ export default function ChatPage() {
       if (userId !== currentUser?.id) {
         dispatch(updateUserLastMessage({ userId: String(userId), last_message, last_message_time }));
       }
+
+      if (selectedUser?.id === userId) {
+    dispatch(
+      addMessage({
+        id: crypto.randomUUID() as unknown as number, // Force type to number
+        senderId: String(userId),
+        text: last_message,
+        timestamp: last_message_time,
+      })
+    );
+  }
+
     };
     const handleTyping = ({ userId }: { userId: number }) => {
       if (selectedUser && userId === selectedUser.id) {
