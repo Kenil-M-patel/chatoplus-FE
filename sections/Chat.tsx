@@ -102,6 +102,7 @@ export default function ChatPage() {
       }
     };
     const handleMessage = (message: Message) => {
+      console.log(message)
       if (
         selectedUser &&
         (message.senderId === selectedUser.id || message.senderId === currentUser?.id)
