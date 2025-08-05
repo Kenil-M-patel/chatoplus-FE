@@ -59,9 +59,11 @@ export default function ChatPage() {
 
   useEffect(() => {
     console.log(token)
-    socketRef.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
+    socketRef.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, 
+      {
       auth: { token: `Bearer ${token}` },
-      path: "/service2/socket.io"
+      path: "/service2/socket.io/",
+      transports: ['websocket', 'polling'],
     });
     const socket = socketRef.current;
     socket.on("connect", () => {
