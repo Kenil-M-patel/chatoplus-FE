@@ -2,7 +2,7 @@
 
 import { ChatView } from "@/components/ChatView";
 import { NoChatSelectedView } from "@/components/NoChatSelectedView";
-import {  Message, User, UserInfo } from "@/constants/constants";
+import { Message, User, UserInfo } from "@/constants/constants";
 import { logout } from "@/store/authSlice";
 import { RootState } from "@/store/ReduxProvider";
 import { handleError } from "@/utils/utils";
@@ -11,7 +11,13 @@ import { useState, useEffect, useRef, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { io, Socket } from "socket.io-client";
 import Sidebar from "./Sidebar";
-import { sendMessage, fetchMessages, addMessage,  clearMessages, setTyping } from "@/store/messageSlice";
+import {
+  sendMessage,
+  fetchMessages,
+  addMessage,
+  clearMessages,
+  setTyping,
+} from "@/store/messageSlice";
 import { updateUserStatus, updateUserLastMessage } from "@/store/contactsSlice";
 import { AppDispatch } from "@/store/store";
 
@@ -30,7 +36,9 @@ export default function ChatPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
   const messages = useSelector((state: RootState) => state.messages.messages);
-  const isMessagesLoading = useSelector((state: RootState) => state.messages.isLoading);
+  const isMessagesLoading = useSelector(
+    (state: RootState) => state.messages.isLoading
+  );
   const isTyping = useSelector((state: RootState) => state.messages.isTyping);
   const { token } = useSelector((state: RootState) => state.auth);
 
@@ -58,12 +66,11 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    console.log(token)
-    socketRef.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, 
-      {
+    console.log(token);
+    socketRef.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
       auth: { token: `Bearer ${token}` },
       path: "/service2/socket.io/",
-      transports: ['websocket', 'polling'],
+      transports: ["websocket", "polling"],
     });
     const socket = socketRef.current;
     socket.on("connect", () => {
@@ -71,7 +78,6 @@ export default function ChatPage() {
     });
 
     socket.on("connect_error", (error) => {
-      console.error("Socket error:", error.message);
       if (error.message.includes("token")) {
         dispatch(logout());
         router.push("/login");
@@ -105,12 +111,15 @@ export default function ChatPage() {
       }
     };
     const handleMessage = (message: Message) => {
-      console.log(message)
+      console.log(message);
       if (
         selectedUser &&
-        (message.senderId === selectedUser.id || message.senderId === currentUser?.id)
+        (message.senderId === selectedUser.id ||
+          message.senderId === currentUser?.id)
       ) {
-        dispatch(addMessage({ ...message, timestamp: new Date(message.timestamp) }));
+        dispatch(
+          addMessage({ ...message, timestamp: new Date(message.timestamp) })
+        );
       }
     };
     const handleUserUpdate = ({
@@ -123,20 +132,25 @@ export default function ChatPage() {
       last_message_time: Date;
     }) => {
       if (userId !== currentUser?.id) {
-        dispatch(updateUserLastMessage({ userId: String(userId), last_message, last_message_time }));
+        dispatch(
+          updateUserLastMessage({
+            userId: String(userId),
+            last_message,
+            last_message_time,
+          })
+        );
       }
 
       if (selectedUser?.id === userId) {
-    dispatch(
-      addMessage({
-        id: crypto.randomUUID() as unknown as number, // Force type to number
-        senderId: String(userId),
-        text: last_message,
-        timestamp: last_message_time,
-      })
-    );
-  }
-
+        dispatch(
+          addMessage({
+            id: crypto.randomUUID() as unknown as number, // Force type to number
+            senderId: String(userId),
+            text: last_message,
+            timestamp: last_message_time,
+          })
+        );
+      }
     };
     const handleTyping = ({ userId }: { userId: number }) => {
       if (selectedUser && userId === selectedUser.id) {
@@ -158,7 +172,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (selectedUser && currentUser) {
       dispatch(fetchMessages({ selectedUserId: String(selectedUser.id) }));
-      console.log('hell');
+      console.log("hell");
       socketRef.current?.emit("joinChat", selectedUser.id);
       if (isMobileView) setShowChatViewMobile(true);
     } else {
@@ -167,7 +181,6 @@ export default function ChatPage() {
     }
   }, [selectedUser, currentUser, isMobileView, dispatch]);
 
-
   useEffect(() => {
     if (messages?.length && !isMessagesLoading) {
       // Auto-scroll to bottom when messages change (new message sent or received)
@@ -175,13 +188,15 @@ export default function ChatPage() {
     }
   }, [messages, isMessagesLoading]);
 
-const handleSendMessage = async (e: FormEvent) => {
-  e.preventDefault();
-  if (!newMessage.trim() || !selectedUser || !currentUser) return;
-  await dispatch(sendMessage({ receiverId: String(selectedUser.id), text: newMessage }));
-  setNewMessage("");
-  (e.target as HTMLFormElement).querySelector("input")?.blur();
-};
+  const handleSendMessage = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !selectedUser || !currentUser) return;
+    await dispatch(
+      sendMessage({ receiverId: String(selectedUser.id), text: newMessage })
+    );
+    setNewMessage("");
+    (e.target as HTMLFormElement).querySelector("input")?.blur();
+  };
 
   const handleTyping = () => {
     if (selectedUser && socketConnected) {
