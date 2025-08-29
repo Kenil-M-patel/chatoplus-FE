@@ -69,7 +69,7 @@ export default function ChatPage() {
     console.log(token);
     socketRef.current = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
       auth: { token: `Bearer ${token}` },
-      path: "/service2/socket.io/",
+      path: "/socket.io/",
       transports: ["websocket", "polling"],
     });
     const socket = socketRef.current;
